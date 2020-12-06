@@ -1,9 +1,8 @@
-from time import sleep
-
+# from time import sleep
 from bs4 import BeautifulSoup
 import requests
 from constants import SCRAPING_URL
-import lxml
+# import lxml
 
 
 class ZillowScraper:
@@ -28,11 +27,9 @@ class ZillowScraper:
         # print(self.soup)
 
     def scrap_now(self) -> dict:
-        data = {}
+        data = {'addresses': [add.text for add in self.soup.select('.list-card-addr')]}
         price = [link.text.split('/')[0].split('+')[0] for link in self.soup.select('.list-card-price')]
         data['prices'] = price
-        data['addresses'] = [add.text for add in self.soup.select('.list-card-addr')]
         data['links'] = [link.attrs['href'] for link in self.soup.select('.list-card-link')]
         print(data)
-
         return data
