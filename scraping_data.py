@@ -27,9 +27,16 @@ class ZillowScraper:
         # print(self.soup)
 
     def scrap_now(self) -> dict:
-        data = {'addresses': [add.text for add in self.soup.select('.list-card-addr')]}
-        price = [link.text.split('/')[0].split('+')[0] for link in self.soup.select('.list-card-price')]
+        data = {'addresses': [add.text for add in self.soup.select('address')]}
+        price = [price.get_text().split("+")[0] for price in self.soup.select(".list-card-details li") if "$" in price.text]
         data['prices'] = price
-        data['links'] = [link.attrs['href'] for link in self.soup.select('.list-card-link')]
-        print(data)
+        links = [link.attrs['href'] for link in self.soup.select('.list-card-top a')]
+        for link in range(0, len(links)):
+            if links[link][0]== '/':
+                links[link]='https://www.zillow.com'+links[link]
+
+        data['links']=links
+        for i in data['prices']:
+            print(i)
+        print(len(data['prices']), len(data['addresses']), len(data['links']))
         return data
